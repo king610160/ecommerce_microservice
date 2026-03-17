@@ -1,0 +1,37 @@
+# Python 緩存
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+htmlcov/
+
+# 虛擬環境 (最重要，絕對不要包進去)
+.venv/
+venv/
+ENV/
+env/
+
+# 開發工具與 IDE 設定
+.vscode/
+.idea/
+.git/
+.gitignore
+*.swp
+*.bak
+
+# 環境變數與敏感資訊
+.env
+.env.local
+.env.*
+secrets.txt
+
+# Docker 相關
+Dockerfile
+docker-compose.yml
+
+# OS 產生的雜物
+.DS_Store
+Thumbs.db

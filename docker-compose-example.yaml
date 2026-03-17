@@ -1,0 +1,50 @@
+services:
+  # 認證服務 (Auth Service)
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    image: auth_server:1.1
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_USER=<DB_USER>
+      - DB_PASS=<DB_PASS>
+      - DB_NAME=<DB_NAME>
+    # 須告訴 Docker 允許解析這個特殊網址
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # 訂單服務 (Order Service)
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    image: order_server:1.1
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_USER=<DB_USER>
+      - DB_PASS=<DB_PASS>
+      - DB_NAME=<DB_NAME>
+    # 須告訴 Docker 允許解析這個特殊網址
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # 前端服務 (React)
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+    image: frontend:1.2
+    ports:
+      - "5173:80"
+    volumes:
+      # 將掛載目標改為 conf.d/ 下的檔案
+      # :ro 代表 Read-Only，保護設定不被容器修改
+      - ./services/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - auth-service
+      - order-service
