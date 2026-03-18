@@ -11,7 +11,6 @@ function Login({ onLoginSuccess }) {
     setError('');
 
     try {
-      // 之後上雲可以透過環境變數注入
       const response = await axios.post("/api/auth/login", {
         username: username,
         password: password

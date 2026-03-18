@@ -19,7 +19,7 @@ function App() {
   return (
     
     <div className="App">
-      {/* 如果登入了，在頁面頂端顯示一個簡單的登出按鈕 */}
+      {/* 如果登入了，在頁面頂端顯示簡單的登出按鈕 */}
       {isLoggedIn && (
         <div style={{ textAlign: 'right', padding: '10px', borderBottom: '1px solid #ccc' }}>
           <span>當前使用者: {user?.username} </span>
