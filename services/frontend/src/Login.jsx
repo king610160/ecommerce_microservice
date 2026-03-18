@@ -11,7 +11,7 @@ function Login({ onLoginSuccess }) {
     setError('');
 
     try {
-      // 這裡先寫死 localhost，之後上雲可以透過環境變數注入
+      // 之後上雲可以透過環境變數注入
       const response = await axios.post("/api/auth/login", {
         username: username,
         password: password
@@ -24,8 +24,6 @@ function Login({ onLoginSuccess }) {
       setError(err.response?.data?.detail || '登入失敗，請檢查網路或帳密');
     }
   };
-
-  // console.log("目前的 API URL:", import.meta.env.VITE_LOGIN_URL);
 
   return (
     <div style={{ padding: '20px', maxWidth: '300px' }}>
