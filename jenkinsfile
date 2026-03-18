@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+
+    environment {
+        // 請修改為你的 AWS 帳號 ID 與區域
+        ACCOUNT_ID     = "${env.AWS_ACCOUNT_ID}"
+        REGION         = "${env.AWS_DEFAULT_REGION}"
+        ECR_URL        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        GIT_URL        = "https://github.com/king610160/ecommerce_microservice.git"
+        PROJECT_PREFIX = "prod-ecommerce"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // 使用設定好的 Credentials ID
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: '*/main']], 
+                    userRemoteConfigs: [[url: "${GIT_URL}", 
+                    credentialsId: 'jenkins_microservice']]])
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                script {
+                    // 有綁 IAM Role，可直接執行不需要帶 Key
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_URL}"
+                }
+            }
+        }
+
+        // --- 以下為各別服務的打包階段 ---
+        stage('Build & Push Auth Service') {
+            when { changeset "services/auth-service/**" }
+            steps {
+                script {
+                    def imageName = "${ECR_URL}/${PROJECT_PREFIX}/auth-service"
+                    def tag = "v${env.BUILD_NUMBER}"
+                    sh "docker build -t ${imageName}:${tag} ./services/auth-service"
+                    sh "docker push ${imageName}:${tag}"
+                    sh "docker tag ${imageName}:${tag} ${imageName}:latest"
+                    sh "docker push ${imageName}:latest"
+                }
+            }
+        }
+
+        stage('Build & Push Order Service') {
+            when { changeset "services/order-service/**" }
+            steps {
+                script {
+                    def imageName = "${ECR_URL}/${PROJECT_PREFIX}/order-service"
+                    def tag = "v${env.BUILD_NUMBER}"
+                    sh "docker build -t ${imageName}:${tag} ./services/order-service"
+                    sh "docker push ${imageName}:${tag}"
+                    sh "docker tag ${imageName}:${tag} ${imageName}:latest"
+                    sh "docker push ${imageName}:latest"
+                }
+            }
+        }
+
+        stage('Build & Push Frontend') {
+            when { changeset "services/frontend/**" }
+            steps {
+                script {
+                    def imageName = "${ECR_URL}/${PROJECT_PREFIX}/frontend"
+                    def tag = "v${env.BUILD_NUMBER}"
+                    // 注意：前端打包時，Nginx 設定會透過 Volume 掛載，所以這裡只包靜態檔
+                    sh "docker build -t ${imageName}:${tag} ./services/frontend"
+                    sh "docker push ${imageName}:${tag}"
+                    sh "docker tag ${imageName}:${tag} ${imageName}:latest"
+                    sh "docker push ${imageName}:latest"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // 清理本地 Image，避免 EC2 硬碟爆掉 (SRE 必備)
+            sh "docker image prune -f"
+        }
+        success {
+            echo "Successfully deployed all changed services!"
+        }
+    }
+}
