@@ -10,8 +10,7 @@ RUN npm install -g pnpm && pnpm install
 # 複製原始碼
 COPY . .
 
-# 【修改點】刪除所有的 ARG VITE_LOGIN_URL 與 ENV 宣告
-# 因為現在程式碼改用相對路徑，編譯時不需要知道後端網址
+# 現在程式碼用相對路徑，編譯時不需要知道後端網址
 RUN pnpm build
 
 
