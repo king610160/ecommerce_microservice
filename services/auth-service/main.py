@@ -36,7 +36,7 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return {"status": "success", "username": user.username, "id": user.id}
 
-# 檢測程式健康
+# 檢測健康度
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}

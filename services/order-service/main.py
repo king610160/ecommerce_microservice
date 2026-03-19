@@ -29,7 +29,7 @@ def get_db():
     finally:
         db.close()
 
-# 檢測程式健康度
+# 檢測健康度
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
