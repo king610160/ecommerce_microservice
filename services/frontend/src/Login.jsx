@@ -11,7 +11,7 @@ function Login({ onLoginSuccess }) {
     setError('');
 
     try {
-      // 用 nginx 的方式導向對應路由
+      // 用 nginx 的方式導至對應路由
       const response = await axios.post("/api/auth/login", {
         username: username,
         password: password
