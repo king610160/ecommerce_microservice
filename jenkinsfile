@@ -8,6 +8,9 @@ pipeline {
         ECR_URL        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         GIT_URL        = "https://github.com/king610160/ecommerce_microservice.git"
         PROJECT_PREFIX = "prod-ecommerce"
+
+        // short hash
+        GIT_SHORT_HASH = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
     }
 
     stages {
@@ -36,7 +39,7 @@ pipeline {
             steps {
                 script {
                     def imageName = "${ECR_URL}/${PROJECT_PREFIX}/auth-service"
-                    def tag = "v${env.BUILD_NUMBER}"
+                    def tag = "v${env.BUILD_NUMBER}-${GIT_SHORT_HASH}"
                     sh "docker build -t ${imageName}:${tag} ./services/auth-service"
                     sh "docker push ${imageName}:${tag}"
                     sh "docker tag ${imageName}:${tag} ${imageName}:latest"
@@ -50,7 +53,7 @@ pipeline {
             steps {
                 script {
                     def imageName = "${ECR_URL}/${PROJECT_PREFIX}/order-service"
-                    def tag = "v${env.BUILD_NUMBER}"
+                    def tag = "v${env.BUILD_NUMBER}-${GIT_SHORT_HASH}"
                     sh "docker build -t ${imageName}:${tag} ./services/order-service"
                     sh "docker push ${imageName}:${tag}"
                     sh "docker tag ${imageName}:${tag} ${imageName}:latest"
@@ -64,7 +67,7 @@ pipeline {
             steps {
                 script {
                     def imageName = "${ECR_URL}/${PROJECT_PREFIX}/frontend"
-                    def tag = "v${env.BUILD_NUMBER}"
+                    def tag = "v${env.BUILD_NUMBER}-${GIT_SHORT_HASH}"
                     // 注意：前端打包時，Nginx 設定會透過 Volume 掛載，所以這裡只包靜態檔
                     sh "docker build -t ${imageName}:${tag} ./services/frontend"
                     sh "docker push ${imageName}:${tag}"
