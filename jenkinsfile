@@ -32,7 +32,7 @@ pipeline {
 
         // --- 以下為各別服務的打包階段 ---
         stage('Build & Push Auth Service') {
-            // when { changeset "services/auth-service/**" }
+            when { changeset "services/auth-service/**" }
             steps {
                 script {
                     def imageName = "${ECR_URL}/${PROJECT_PREFIX}/auth-service"
@@ -46,7 +46,7 @@ pipeline {
         }
 
         stage('Build & Push Order Service') {
-            // when { changeset "services/order-service/**" }
+            when { changeset "services/order-service/**" }
             steps {
                 script {
                     def imageName = "${ECR_URL}/${PROJECT_PREFIX}/order-service"
@@ -60,7 +60,7 @@ pipeline {
         }
 
         stage('Build & Push Frontend') {
-            // when { changeset "services/frontend/**" }
+            when { changeset "services/frontend/**" }
             steps {
                 script {
                     def imageName = "${ECR_URL}/${PROJECT_PREFIX}/frontend"
