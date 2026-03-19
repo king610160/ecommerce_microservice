@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // 請修改為你的 AWS 帳號 ID 與區域
+        // 改為 AWS 帳號 ID 與區域
         ACCOUNT_ID     = "${env.AWS_ACCOUNT_ID}"
-        REGION         = "${env.AWS_DEFAULT_REGION}"
+        AWS_REGION     = "${env.AWS_DEFAULT_REGION}"
         ECR_URL        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         GIT_URL        = "https://github.com/king610160/ecommerce_microservice.git"
         PROJECT_PREFIX = "prod-ecommerce"
