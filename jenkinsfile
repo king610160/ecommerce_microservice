@@ -44,6 +44,8 @@ pipeline {
                     sh "docker push ${imageName}:${tag}"
                     sh "docker tag ${imageName}:${tag} ${imageName}:latest"
                     sh "docker push ${imageName}:latest"
+
+                    sh "docker rmi ${imageName}:${tag} ${imageName}:latest"
                 }
             }
         }
@@ -58,6 +60,8 @@ pipeline {
                     sh "docker push ${imageName}:${tag}"
                     sh "docker tag ${imageName}:${tag} ${imageName}:latest"
                     sh "docker push ${imageName}:latest"
+
+                    sh "docker rmi ${imageName}:${tag} ${imageName}:latest"
                 }
             }
         }
@@ -73,6 +77,8 @@ pipeline {
                     sh "docker push ${imageName}:${tag}"
                     sh "docker tag ${imageName}:${tag} ${imageName}:latest"
                     sh "docker push ${imageName}:latest"
+
+                    sh "docker rmi ${imageName}:${tag} ${imageName}:latest"
                 }
             }
         }
