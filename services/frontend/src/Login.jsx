@@ -27,7 +27,7 @@ function Login({ onLoginSuccess }) {
 
   return (
     <div style={{ padding: '20px', maxWidth: '300px' }}>
-      <h2>電商系統登入</h2>
+      <h2>電商系統登入頁面</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <input 
