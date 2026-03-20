@@ -46,6 +46,21 @@ pipeline {
                     sh "docker push ${imageName}:latest"
 
                     sh "docker rmi ${imageName}:${tag} ${imageName}:latest"
+
+                    // 2. 更新 Helm 的 values.yaml (只改 tag，不碰 Registry)
+                    // 使用 sed 修改 deploy 目錄下的 values.yaml
+                    dir("deploy/auth-service") {
+                        sh "sed -i 's/tag: .*/tag: \"${tag}\"/' values.yaml"
+                    }
+
+                    // 3. 推回 Git (ArgoCD 會偵測到此變更)
+                    sh """
+                        git config user.email "jenkins@example.com"
+                        git config user.name "Jenkins CI"
+                        git add deploy/auth-service/values.yaml
+                        git commit -m "chore(deploy): update auth-service image tag to ${tag} [skip ci]"
+                        git push origin main
+                    """
                 }
             }
         }

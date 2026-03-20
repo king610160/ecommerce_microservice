@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "auth-service.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "auth-service.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "auth-service.name" . }}
+    spec:
+      # --- [安全強化 1: Pod 層級] ---
+      securityContext:
+        runAsNonRoot: true        # 強制不得以 root 執行
+        runAsUser: 1000           # 指定使用 UID 1000 (通常是 node/app 使用者)
+        fsGroup: 2000             # 檔案系統群組權限控管
+      
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          
+          # --- [安全強化 2: 容器層級] ---
+          securityContext:
+            allowPrivilegeEscalation: false  # 禁止權限提升 (防止跳出容器)
+            readOnlyRootFilesystem: true    # 根檔案系統唯讀 (防止被植入木馬)
+            capabilities:
+              drop: ["ALL"]                 # 丟棄所有不必要的 Linux 核心能力
+          
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          
+          envFrom:
+            # 這是由 ExternalSecret 自動產生的 K8s Secret
+            - secretRef:
+                name: {{ include "auth-service.fullname" . }}-auth-secret

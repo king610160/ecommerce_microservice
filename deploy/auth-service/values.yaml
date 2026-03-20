@@ -1,0 +1,14 @@
+replicaCount: 2
+
+image:
+  # 這是你 ECR 的路徑 (不含 Tag)
+  repository: "prod-ecommerce/auth-service"
+  registry: "851725371209.dkr.ecr.ap-northeast-1.amazonaws.com"
+  pullPolicy: IfNotPresent
+  tag: "latest" 
+
+service:
+  type: ClusterIP
+  port: 80
+
+containerPort: 8000
