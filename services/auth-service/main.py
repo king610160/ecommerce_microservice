@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# CORS 全開
+# CORS 先全開
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
