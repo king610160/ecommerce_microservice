@@ -28,7 +28,7 @@ def get_db():
     finally:
         db.close()
 
-# 登入 API
+# 登入
 @app.post("/login")
 def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == request.username).first()
@@ -36,7 +36,7 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return {"status": "success", "username": user.username, "id": user.id}
 
-# 健康度 API
+# API 健康度
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
