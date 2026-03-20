@@ -5,7 +5,7 @@ image:
   repository: "prod-ecommerce/auth-service"
   registry: "851725371209.dkr.ecr.ap-northeast-1.amazonaws.com"
   pullPolicy: IfNotPresent
-  tag: "v24-a9e6b27"
+  tag: "v29-655dafb"
 
 service:
   type: ClusterIP
