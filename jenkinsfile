@@ -53,14 +53,20 @@ pipeline {
                         sh "sed -i 's/tag: .*/tag: \"${tag}\"/' values.yaml"
                     }
 
-                    // 3. 推回 Git (ArgoCD 會偵測到此變更)
-                    sh """
-                        git config user.email "jenkins@example.com"
-                        git config user.name "Jenkins CI"
-                        git add deploy/auth-service/values.yaml
-                        git commit -m "chore(deploy): update auth-service image tag to ${tag} [skip ci]"
-                        git push origin HEAD:main
-                    """
+                    // 3. 使用憑證推回 Git (注入認證資訊以解決 fatal error)
+                    withCredentials([usernamePassword(credentialsId: 'jenkins_microservice', 
+                                     passwordVariable: 'GIT_PASS', 
+                                     usernameVariable: 'GIT_USER')]) {
+                        sh """
+                            git remote set-url origin https://${GIT_USER}:${GIT_PASS}@github.com/king610160/ecommerce_microservice.git
+                            
+                            git config user.email "jenkins@example.com"
+                            git config user.name "Jenkins CI"
+                            git add deploy/auth-service/values.yaml
+                            git commit -m "chore(deploy): update auth-service image tag to ${tag} [skip ci]" || echo "No changes"
+                            git push origin HEAD:main
+                        """
+                    }
                 }
             }
         }
