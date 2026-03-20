@@ -28,7 +28,7 @@ def get_db():
     finally:
         db.close()
 
-# 登入頁面
+# 登入API
 @app.post("/login")
 def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == request.username).first()
