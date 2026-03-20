@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# CORS 先全開
+# CORS 全開
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 啟動時自動初始化資料庫 (正式環境會用 Alembic)
+# 啟動時自動初始化資料庫 (正式環境使用 Alembic)
 init_db()
 
 class LoginRequest(BaseModel):

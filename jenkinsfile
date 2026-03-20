@@ -59,7 +59,7 @@ pipeline {
                         git config user.name "Jenkins CI"
                         git add deploy/auth-service/values.yaml
                         git commit -m "chore(deploy): update auth-service image tag to ${tag} [skip ci]"
-                        git push origin main
+                        git push origin HEAD:main
                     """
                 }
             }
