@@ -54,7 +54,7 @@ pipeline {
                     }
 
                     // 3. 使用憑證推回 Git (注入認證資訊以解決 fatal error)
-                    withCredentials([usernamePassword(credentialsId: 'jenkins_microservice', 
+                    withCredentials([usernamePassword(credentialsId: 'jenkins_ecommerce', 
                                      passwordVariable: 'GIT_PASS', 
                                      usernameVariable: 'GIT_USER')]) {
                         sh """
