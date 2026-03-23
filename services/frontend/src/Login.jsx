@@ -32,14 +32,14 @@ function Login({ onLoginSuccess }) {
       <form onSubmit={handleSubmit}>
         <input 
           type="text" 
-          placeholder="帳號 (admin)" 
+          placeholder="帳號 (account)" 
           value={username}
           onChange={e => setUsername(e.target.value)} 
         />
         <br/><br/>
         <input 
           type="password" 
-          placeholder="密碼 (password123)" 
+          placeholder="密碼 (password)" 
           value={password}
           onChange={e => setPassword(e.target.value)} 
         />
