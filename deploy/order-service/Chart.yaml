@@ -1,0 +1,6 @@
+apiVersion: v2
+name: order-service
+description: A Helm chart for Order Service
+type: application
+version: 0.1.0      # Chart 模板的版本
+appVersion: "1.0.0" # 應用程式本身的版本

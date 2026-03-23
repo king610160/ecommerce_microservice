@@ -35,6 +35,14 @@ class User(Base):
     email = Column(String(100))
     orders = relationship("Order", back_populates="owner")
 
+# Stock 表 (商品與庫存)
+class Stock(Base):
+    __tablename__ = "stocks"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), index=True)
+    price = Column(Float)
+    quantity = Column(Integer) # 庫存數量，這是併發競爭的核心
+
 # Order 表 (訂單主體)
 class Order(Base):
     __tablename__ = "orders"
