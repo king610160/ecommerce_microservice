@@ -5,7 +5,7 @@ image:
   repository: "prod-ecommerce/frontend"
   registry: "851725371209.dkr.ecr.ap-northeast-1.amazonaws.com"
   pullPolicy: IfNotPresent
-  tag: "v36-a0f3bb7"
+  tag: "v41-d236224"
 
 service:
   type: ClusterIP
