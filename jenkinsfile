@@ -105,6 +105,27 @@ stage('Checkout') {
                     sh "docker push ${imageName}:latest"
 
                     sh "docker rmi ${imageName}:${tag} ${imageName}:latest"
+
+                                        // 2. 更新 Helm 的 values.yaml (只改 tag，不碰 Registry)
+                    // 使用 sed 修改 deploy 目錄下的 values.yaml
+                    dir("deploy/order-service") {
+                        sh "sed -i 's/tag: .*/tag: \"${tag}\"/' values.yaml"
+                    }
+
+                    // 3. 使用憑證推回 Git (注入認證資訊以解決 fatal error)
+                    withCredentials([usernamePassword(credentialsId: '334dca78-967e-4cae-bd9a-0d0c81ffc23b', 
+                                     passwordVariable: 'GIT_PASS', 
+                                     usernameVariable: 'GIT_USER')]) {
+                        sh """
+                            git remote set-url origin https://${GIT_USER}:${GIT_PASS}@github.com/king610160/ecommerce_microservice.git
+                            
+                            git config user.email "jenkins@example.com"
+                            git config user.name "Jenkins CI"
+                            git add deploy/order-service/values.yaml
+                            git commit -m "chore(deploy): update order-service image tag to ${tag} [skip ci]" || echo "No changes"
+                            git push origin HEAD:main
+                        """
+                    }
                 }
             }
         }
