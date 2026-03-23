@@ -15,9 +15,8 @@ spec:
       # --- [安全強化 1: Pod 層級] ---
       securityContext:
         runAsNonRoot: true        # 強制不得以 root 執行
-        runAsUser: 1000           # 指定使用 UID 1000 (通常是 node/app 使用者)
-        fsGroup: 2000             # 檔案系統群組權限控管
-      
+        runAsUser: 101           
+
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -31,3 +30,21 @@ spec:
           
           ports:
             - containerPort: {{ .Values.containerPort }}
+
+          # nginx 要寫檔的目錄，先簡單建
+          volumeMounts:
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+            - name: nginx-tmp
+              mountPath: /tmp
+              
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        - name: nginx-tmp
+          emptyDir: {}
+            
