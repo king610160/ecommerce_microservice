@@ -20,5 +20,14 @@ FROM nginx:stable-alpine AS runner
 # 複製編譯好的靜態檔案
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+# 刪除預設配置 (選配，但比較乾淨)
+RUN rm /etc/nginx/conf.d/default.conf
+
+# 複製你的自定義配置
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 複製靜態檔案
+COPY --from=builder /app/dist /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
