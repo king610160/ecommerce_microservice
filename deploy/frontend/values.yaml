@@ -5,7 +5,7 @@ image:
   repository: "prod-ecommerce/frontend"
   registry: "851725371209.dkr.ecr.ap-northeast-1.amazonaws.com"
   pullPolicy: IfNotPresent
-  tag: "v41-d236224"
+  tag: "v43-27c2572"
 
 service:
   type: NodePort
