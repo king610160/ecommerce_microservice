@@ -20,29 +20,8 @@ pipeline {
                 checkout([$class: 'GitSCM', 
                     branches: [[name: '*/main']], 
                     userRemoteConfigs: [[url: "${GIT_URL}", 
-                    credentialsId: 'jenkins_microservice']],
-                    Gemini 說了
-在你的腳本中，[skip ci] 出現在 Stage 'Build & Push Auth Service' 的最後一個 sh 指令裡：
-
-Groovy
-git commit -m "chore(deploy): update auth-service image tag to ${tag} [skip ci]" || echo "No changes"
-雖然你已經在 Commit Message 裡寫了這串字，但 Jenkins 預設是不會理會它的。它只是一串普通的文字，除非你額外告訴 Jenkins：「看到這串字請不要觸發 Build」。
-
-為了徹底解決這個「無限循環」並優化你提到的「三個服務都要做重複動作」的問題，我建議進行以下調整：
-
-1. 讓 Jenkins 認得 [skip ci]
-你需要安裝 Git Plugin（通常內建已裝），並在 Pipeline 腳本中加入 extensions。
-
-修改 Checkout 階段，加入 PollSkipRegionConsole 或是排除特定的 Commit 訊息：
-
-Groovy
-stage('Checkout') {
-    steps {
-        checkout([$class: 'GitSCM', 
-                branches: [[name: '*/main']], 
-                userRemoteConfigs: [[url: "${GIT_URL}", credentialsId: 'jenkins_microservice']],
-                extensions: [[$class: 'MessageExclusion', excludedMessage: '.*\\[skip ci\\].*']]        
-            ]),    
+                    credentialsId: 'jenkins_microservice']]
+                ])   
             }
         }
 
