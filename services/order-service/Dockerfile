@@ -3,41 +3,30 @@ FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
-# 設定環境變數，禁止 Python 產生 pyc 檔案且不緩衝輸出，有助於容器日誌紀錄
+# 禁用快取以減少體積
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# 先複製 requirements 並安裝
 COPY requirements.txt .
-
-# 安裝原本的套件，同時加上 OTel 核心套件
-RUN pip install --no-cache-dir --user -r requirements.txt \
-    pymysql \
-    opentelemetry-api \
-    opentelemetry-sdk \
-    opentelemetry-exporter-otlp \
-    opentelemetry-instrumentation-fastapi \
-    opentelemetry-instrumentation-logging \
-    opentelemetry-instrumentation-sqlalchemy \
-    opentelemetry-instrumentation-mysql
+# 直接安裝到系統路徑，不加 --user
+RUN pip install --no-cache-dir uvicorn pymysql -r requirements.txt
 
 # --- Stage 2: Runner ---
 FROM python:3.12-slim AS runner
 
 WORKDIR /app
 
-# 從 Builder 階段複製安裝好的套件
-COPY --from=builder /root/.local /root/.local
-# 複製應用程式原始碼
+# 直接從 Builder 複製整個 site-packages
+# 這是 Python 存放套件的標準路徑
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 COPY . .
 
-# 確保 /root/.local/bin 在 PATH 中，這樣才能執行 uvicorn
-ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# 預設 Port，之後可以在啟動時透過環境變數覆蓋
 EXPOSE 8001
 
-# 使用 opentelemetry-instrument 包裹啟動指令
-# 自動讀取環境變數來決定把 Trace 送到哪裡
-CMD ["opentelemetry-instrument", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+# 測試：如果還是噴錯，可以在這裡加一個 RUN which uvicorn 檢查
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
