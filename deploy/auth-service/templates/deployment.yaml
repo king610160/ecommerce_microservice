@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "auth-service.fullname" . }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  # replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: {{ include "auth-service.name" . }}
@@ -21,7 +21,10 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
           # --- [安全強化 2: 容器層級] ---
           securityContext:
             allowPrivilegeEscalation: false  # 禁止權限提升 (防止跳出容器)
